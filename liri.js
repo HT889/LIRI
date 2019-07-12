@@ -13,17 +13,17 @@ var moment = require("moment");
 
 var action = process.argv[2];
 var parameter = process.argv.slice(3).join(" ");
-console.log(action);
+// console.log(action);
 
 
 function liri() {
 switch (action) {
   case "concert-this":
-    concertThis(parameter);
+    concertThis();
     break;
   
   case "spotify-this-song":
-    spotifyThis(parameter);
+    spotifyThis();
     break;
 
   case "movie-this":
@@ -38,11 +38,12 @@ switch (action) {
 liri();
 //CONCERT THIS
 function concertThis() {
-  const artistName = process.argv.slice(3).join(" ");
-
-  let queryUrl = `https://rest.bandsintown.com/artists/${artistName}/events?app_id=codingbootcamp`;
-  // console.log(queryUrl);
+  parameter = parameter.slice(1, parameter.length-1);
+  // console.log(parameter);
+  let queryUrl = `https://rest.bandsintown.com/artists/${parameter}/events?app_id=codingbootcamp`;
+  // console.log("q", queryUrl);
   axios.get(queryUrl).then(function (response) {
+    // console.log(response.data[0]);
     console.log("Venue:", response.data[0].venue.name);
     console.log("Location:", response.data[0].venue.city +",", response.data[0].venue.country);
     console.log("Date:", moment(response.data[0].datetime).format("MMM Do YYYY"));
@@ -53,13 +54,12 @@ function concertThis() {
 //SPOTIFY THIS
 function spotifyThis() {
 
-  const query = process.argv.slice(3).join(" ");
-  console.log(query);
 
-spotify.search({ type: 'track', query: query, limit: 3 })
+spotify.search({ type: 'track', query: parameter, limit: 3 })
   .then(function(response) {
     for (let i = 0; i < response.tracks.items.length; i++) {
       console.log("-------------------------------------------------");
+      console.log("Artist:", response.tracks.items[i].artists[0].name);
       console.log("Track:", response.tracks.items[i].name)
       console.log("Preview:", response.tracks.items[i].preview_url);
       console.log("Album Name:", response.tracks.items[i].album.name);
@@ -73,8 +73,7 @@ spotify.search({ type: 'track', query: query, limit: 3 })
 }
 //MOVIE THIS
 function movieThis() {
-  const movieName = process.argv.slice(3).join(" ");
-  let queryUrl = `http://www.omdbapi.com/?t=${movieName}&apikey=trilogy`;
+  let queryUrl = `http://www.omdbapi.com/?t=${parameter}&apikey=trilogy`;
 
   axios.get(queryUrl).then(function (response) {
     var table = new AsciiTable(response.data.Title);
@@ -102,10 +101,12 @@ fs.readFile("random.txt", "utf8", function(error, data) {
   console.log(data);
 
   var dataArr = data.split(",");
+  console.log(dataArr);
   parameter = dataArr[1];
   action = dataArr[0];
+  console.log("para", parameter);
+  console.log("act", action);
   liri();
 
 });
 }
-
