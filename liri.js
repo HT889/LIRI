@@ -44,11 +44,15 @@ function concertThis() {
   // console.log("q", queryUrl);
   axios.get(queryUrl).then(function (response) {
     // console.log(response.data[0]);
-    console.log("Venue:", response.data[0].venue.name);
+    console.log(`Venue:", response.data[0].venue.name`);
     console.log("Location:", response.data[0].venue.city +",", response.data[0].venue.country);
     console.log("Date:", moment(response.data[0].datetime).format("MMM Do YYYY"));
   }).catch(function (err) {
-    console.log(err);
+    console.log(`
+
+Sorry! No upcoming concerts detected.
+`);
+    console.log()
   }) 
 }
 //SPOTIFY THIS
@@ -58,6 +62,7 @@ function spotifyThis() {
 spotify.search({ type: 'track', query: parameter, limit: 3 })
   .then(function(response) {
     for (let i = 0; i < response.tracks.items.length; i++) {
+      console.log("\n");
       console.log("-------------------------------------------------");
       console.log("Artist:", response.tracks.items[i].artists[0].name);
       console.log("Track:", response.tracks.items[i].name)
@@ -98,14 +103,10 @@ fs.readFile("random.txt", "utf8", function(error, data) {
   if (error) {
     return console.log(error);
   }
-  console.log(data);
 
   var dataArr = data.split(",");
-  console.log(dataArr);
   parameter = dataArr[1];
   action = dataArr[0];
-  console.log("para", parameter);
-  console.log("act", action);
   liri();
 
 });
